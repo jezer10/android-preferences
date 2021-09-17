@@ -16,6 +16,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var usernameText: EditText
     lateinit var passwordText: EditText
 
+    var firstUser:UserModel=UserModel("Rodrigo","Elpepe")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -25,13 +27,17 @@ class MainActivity : AppCompatActivity() {
         checkBox = findViewById(R.id.cb_main_credentials)
         usernameText = findViewById(R.id.et_main_username)
         passwordText = findViewById(R.id.et_main_password)
-        var rodrigo = loadPreferences(this)
-        Toast.makeText(applicationContext, "${rodrigo.getString("password","rodrigo")}", Toast.LENGTH_SHORT)
+        var rodrigo = loadPreferences(applicationContext)
+        Toast.makeText(
+            applicationContext,
+            "${rodrigo.getString("password", "rodrigo")}",
+            Toast.LENGTH_SHORT
+        )
             .show()
-        if(rodrigo.getBoolean("savedCredentials",false)){
-            startActivity(Intent(applicationContext,DashboardActivity::class.java))
+        if (rodrigo.getBoolean("savedCredentials", false)) {
+            startActivity(Intent(applicationContext, DashboardActivity::class.java))
         }
-        val sharedPreferences = getSharedPreferences("SP_INFO",Context.MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences("SP_INFO", Context.MODE_PRIVATE)
         logButton.setOnClickListener {
             saveCredentials(
                 usernameText.text.toString(),
@@ -43,7 +49,12 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun saveCredentials(username: String, password: String, save: Boolean,context: Context) {
+    private fun saveCredentials(
+        username: String,
+        password: String,
+        save: Boolean,
+        context: Context
+    ) {
 
         if (username == "" || password == "") {
             Toast.makeText(applicationContext, "Invalid Username Or Password", Toast.LENGTH_SHORT)
@@ -56,7 +67,7 @@ class MainActivity : AppCompatActivity() {
             edit.putString("password", password)
             edit.putBoolean("savedCredentials", save)
             edit.apply()
-            startActivity(Intent(applicationContext,DashboardActivity::class.java))
+            startActivity(Intent(applicationContext, DashboardActivity::class.java))
 
         } else {
             Toast.makeText(
@@ -65,13 +76,17 @@ class MainActivity : AppCompatActivity() {
                 Toast.LENGTH_SHORT
             )
                 .show()
-            startActivity(Intent(applicationContext,DashboardActivity::class.java))
+            startActivity(Intent(applicationContext, DashboardActivity::class.java))
 
 
         }
     }
-    private fun loadPreferences(context: Context): SharedPreferences {
-        return context.getSharedPreferences("credentials", Context.MODE_PRIVATE)
+
+
+    companion object {
+        fun loadPreferences(context: Context): SharedPreferences {
+            return context.getSharedPreferences("credentials", Context.MODE_PRIVATE)
+        }
     }
 
 

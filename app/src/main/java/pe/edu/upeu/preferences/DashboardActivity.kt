@@ -6,8 +6,10 @@ import android.os.Bundle
 import android.widget.Button
 
 class DashboardActivity : AppCompatActivity() {
+    lateinit var name:String
     lateinit var buttonLogout:Button
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
         buttonLogout= findViewById(R.id.btn_dashboard_logout)
@@ -15,6 +17,8 @@ class DashboardActivity : AppCompatActivity() {
             val mainActivity= MainActivity.loadPreferences(applicationContext)
             val edit = mainActivity.edit()
             edit.putBoolean("savedCredentials",false)
+            edit.remove("username")
+            edit.remove("password")
             edit.apply()
             startActivity(Intent(applicationContext,MainActivity::class.java))
 

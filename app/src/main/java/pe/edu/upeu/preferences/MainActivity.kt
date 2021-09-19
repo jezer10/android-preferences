@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.InputType
 import android.util.Log
 import android.widget.Button
 import android.widget.CheckBox
@@ -17,6 +18,7 @@ import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
     lateinit var checkBox: CheckBox
+    lateinit var showPass:CheckBox
     lateinit var logButton: Button
     lateinit var usernameText: EditText
     lateinit var passwordText: EditText
@@ -29,6 +31,15 @@ class MainActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        logButton = findViewById(R.id.btn_main_auth)
+        checkBox = findViewById(R.id.cb_main_credentials)
+        usernameText = findViewById(R.id.et_main_username)
+        passwordText = findViewById(R.id.et_main_password)
+        showPass = findViewById(R.id.cb_main_show_password)
+        val loadedPreferences = loadPreferences(applicationContext)
+        if (loadedPreferences.getBoolean("savedCredentials", false)) {
+            startActivity(Intent(applicationContext, DashboardActivity::class.java))
+        }
 
         db.collection("users").whereEqualTo("username", firstUser.username).get()
             .addOnSuccessListener {
@@ -66,14 +77,8 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        logButton = findViewById(R.id.btn_main_auth)
-        checkBox = findViewById(R.id.cb_main_credentials)
-        usernameText = findViewById(R.id.et_main_username)
-        passwordText = findViewById(R.id.et_main_password)
-        val loadedPreferences = loadPreferences(applicationContext)
-        if (loadedPreferences.getBoolean("savedCredentials", false)) {
-            startActivity(Intent(applicationContext, DashboardActivity::class.java))
-        }
+
+
         logButton.setOnClickListener {
             saveCredentials(
                 usernameText.text.toString(),
@@ -81,6 +86,16 @@ class MainActivity : AppCompatActivity() {
                 checkBox.isChecked,
                 this
             )
+        }
+        showPass.setOnClickListener {
+            if(showPass.isChecked){
+                passwordText.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                passwordText.setSelection(passwordText.text.length)
+            }else{
+                Log.i(TAG,"keloke")
+                passwordText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                passwordText.setSelection(passwordText.text.length)
+            }
         }
 
     }
@@ -97,12 +112,11 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(applicationContext, "Empty Required Fields", Toast.LENGTH_SHORT)
                 .show()
             logButton.isEnabled=true
-
             return
         }
         db.collection("users").whereEqualTo("username",username).whereEqualTo("password",password).get().addOnSuccessListener {
             if(it.documents.isEmpty()){
-                Toast.makeText(applicationContext, "Invalid Username Or Password", Toast.LENGTH_SHORT)
+                Toast.makeText(applicationContext, "Invalid Username Or Password", Toast.LENGTH_SHORT).show()
                 logButton.isEnabled=true
 
             }else{
@@ -112,6 +126,12 @@ class MainActivity : AppCompatActivity() {
                     edit.putString("password", password)
                     edit.putBoolean("savedCredentials", save)
                     edit.apply()
+                    Toast.makeText(
+                        applicationContext,
+                        "Credentials successfully saved!",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
                     startActivity(Intent(applicationContext, DashboardActivity::class.java))
 
                 } else {

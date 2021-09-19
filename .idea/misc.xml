@@ -3,7 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/GABRIEL/Documents/AndroidProjects/Preferences/app/src/main/res/layout/activity_dashboard.xml" value="0.20520833333333333" />
+        <entry key="..\:/Users/GABRIEL/Documents/AndroidProjects/Preferences/app/src/main/res/drawable/bg_gradient.xml" value="0.21770833333333334" />
+        <entry key="..\:/Users/GABRIEL/Documents/AndroidProjects/Preferences/app/src/main/res/drawable/bg_splash.xml" value="0.21770833333333334" />
+        <entry key="..\:/Users/GABRIEL/Documents/AndroidProjects/Preferences/app/src/main/res/drawable/ic_baseline_account_circle_24.xml" value="0.21770833333333334" />
+        <entry key="..\:/Users/GABRIEL/Documents/AndroidProjects/Preferences/app/src/main/res/layout/activity_dashboard.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/GABRIEL/Documents/AndroidProjects/Preferences/app/src/main/res/layout/activity_main.xml" value="0.36666666666666664" />
       </map>
     </option>

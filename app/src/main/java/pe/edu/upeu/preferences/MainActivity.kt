@@ -12,19 +12,18 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Toast
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
     lateinit var checkBox: CheckBox
-    lateinit var showPass:CheckBox
+    lateinit var showPass: CheckBox
     lateinit var logButton: Button
     lateinit var usernameText: EditText
     lateinit var passwordText: EditText
-    private val db = Firebase.firestore
+    lateinit var signButton: Button
 
-    var firstUser: UserModel = UserModel("jezerrazuri", "OrgulloAdventista200")
+    var firstUser: UserModel = UserModel("juanchovich", "123456","Juan","Trolo")
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,10 +35,15 @@ class MainActivity : AppCompatActivity() {
         usernameText = findViewById(R.id.et_main_username)
         passwordText = findViewById(R.id.et_main_password)
         showPass = findViewById(R.id.cb_main_show_password)
+        signButton = findViewById(R.id.efab_main_sign_up)
         val loadedPreferences = loadPreferences(applicationContext)
         if (loadedPreferences.getBoolean("savedCredentials", false)) {
             startActivity(Intent(applicationContext, DashboardActivity::class.java))
         }
+        signButton.setOnClickListener {
+            startActivity(Intent(applicationContext, RegisterActivity::class.java))
+        }
+
 
         db.collection("users").whereEqualTo("username", firstUser.username).get()
             .addOnSuccessListener {
@@ -48,7 +52,10 @@ class MainActivity : AppCompatActivity() {
                     db.collection("users").add(
                         mapOf(
                             "username" to firstUser.username,
-                            "password" to firstUser.password
+                            "password" to firstUser.password,
+                            "lastname" to firstUser.lastName,
+                            "firstname" to firstUser.firstName
+
                         )
                     ).addOnSuccessListener {
                         Log.i(TAG, "Successfully written document!")
@@ -88,12 +95,13 @@ class MainActivity : AppCompatActivity() {
             )
         }
         showPass.setOnClickListener {
-            if(showPass.isChecked){
+            if (showPass.isChecked) {
                 passwordText.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
                 passwordText.setSelection(passwordText.text.length)
-            }else{
-                Log.i(TAG,"keloke")
-                passwordText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            } else {
+                Log.i(TAG, "keloke")
+                passwordText.inputType =
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
                 passwordText.setSelection(passwordText.text.length)
             }
         }
@@ -106,20 +114,25 @@ class MainActivity : AppCompatActivity() {
         save: Boolean,
         context: Context
     ) {
-        logButton.isEnabled=false
+        logButton.isEnabled = false
 
         if (username == "" || password == "") {
             Toast.makeText(applicationContext, "Empty Required Fields", Toast.LENGTH_SHORT)
                 .show()
-            logButton.isEnabled=true
+            logButton.isEnabled = true
             return
         }
-        db.collection("users").whereEqualTo("username",username).whereEqualTo("password",password).get().addOnSuccessListener {
-            if(it.documents.isEmpty()){
-                Toast.makeText(applicationContext, "Invalid Username Or Password", Toast.LENGTH_SHORT).show()
-                logButton.isEnabled=true
+        db.collection("users").whereEqualTo("username", username).whereEqualTo("password", password)
+            .get().addOnSuccessListener {
+            if (it.documents.isEmpty()) {
+                Toast.makeText(
+                    applicationContext,
+                    "Invalid Username Or Password",
+                    Toast.LENGTH_SHORT
+                ).show()
+                logButton.isEnabled = true
 
-            }else{
+            } else {
                 if (save) {
                     val edit = loadPreferences(context).edit()
                     edit.putString("username", username)
@@ -153,6 +166,8 @@ class MainActivity : AppCompatActivity() {
 
 
     companion object {
+        val db = Firebase.firestore
+
         fun loadPreferences(context: Context): SharedPreferences {
             return context.getSharedPreferences("credentials", Context.MODE_PRIVATE)
         }
